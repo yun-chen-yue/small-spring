@@ -24,15 +24,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Instantiation of bean failed", e);
         }
 
+        // 将创建的bean对象放入缓存
         addSingleton(beanName, bean);
         return bean;
     }
 
     protected Object createBeanInstance(BeanDefinition beanDefinition, String beanName, Object[] args) {
+        // 构造方法
         Constructor constructorToUse = null;
         Class<?> beanClass = beanDefinition.getBeanClass();
+        // 获取所有的构造函数
         Constructor<?>[] declaredConstructors = beanClass.getDeclaredConstructors();
         for (Constructor ctor : declaredConstructors) {
+            // 1. 不是无参构造函数 2. 且当前构造函数的入参长度和传入的参数长度一致   think: 参数类型在哪里判断？==> 可能在下面的实例化策略中,ctor 中有参数类型
             if (null != args && ctor.getParameterTypes().length == args.length) {
                 constructorToUse = ctor;
                 break;
